@@ -13,103 +13,104 @@ namespace GraphColoring
     
     public partial class Form1 : Form
     {
+        public static List<CheckBox> buttons = new List<CheckBox>();
+
+        public static List<Tuple<int, int>> pairs = new List<Tuple<int, int>>();
+        public static GraphicGraphModel GraphModel { get; set; }
+
+
         protected override void OnPaint(PaintEventArgs e)
         {
             var g = e.Graphics;
-
-            //var buffer = buttons.Where(x => x.Checked).ToList();
-            //if (buffer.Count == 2)
-            //{
-            //    pairs.Add(Tuple.Create(buffer[0].Name, buffer[1].Name));
-            //    buffer[0].Checked = false;
-            //    buffer[1].Checked = false;
-            //    buffer.Clear();
-            //}
-
             int y1 = 0;
-            g.DrawString($"({pairs.Count})", new Font("Arial",20), Brushes.Black, new PointF(600, 300 + y1 * 30));
-            foreach(var p in pairs)
+            foreach (var p in pairs)
             {
-                //g.DrawString($"({p.Name})\n", new Font("Arial", 20), Brushes.Black, new PointF(600, 300 + y1 * 30));
+                g.DrawString($"({p.Item1} {p.Item2})\n", new Font("Arial", 20), Brushes.Black, new PointF(50, 100 + y1 * 30));
                 y1++;
             }
-            int y = 0;
-            foreach (var p in buttons)
-            { 
-                g.DrawString($"({p.Name})\n", new Font("Arial", 20), Brushes.Black, new PointF(500,300+y*30));
-                y++;
-            }
-            
+
+            //var r = new Rectangle(650, 300, 350, 350);
+            //g.DrawRectangle(Pens.Black, r);
+            //var r1 = new Rectangle(650, 300, 40, 40);
+            //g.DrawRectangle(Pens.Black, r1);
+
+            GraphModel.DrawGraph(g);
+
         }
 
-        public static List<CheckBox> buttons = new List<CheckBox>();
 
-        public static List<Tuple<string, string>> pairs = new List<Tuple<string, string>>();
-        public static List<CheckBox> buffer = new List<CheckBox>();
-        public static void CreateGraph()
+        public void AddPair(TextBox textBox)
         {
-            int index = 0;
-            for (int i = 0; i< 3; i++)
+            var str = textBox.Text;
+            var s = str.Split(',');
+            if(s.Length!=2)
             {
-                for(int j =0;j<4; j++)
-                {
-                    var button = new CheckBox()
-                    {
-                        Checked = false,
-                        BackColor = Color.Red,
-                        Left = 40 + 150 * i,
-                        Top = 40 + 150 * j,
-                        Size = new Size(40, 40),
-                        Name = Convert.ToString(index),
-                        Text = Convert.ToString(index)
-                    };
-                    buttons.Add(button);
-                    button.CheckedChanged += (s, arg) =>
-                     {
-                         if (button.Checked)
-                         {
-                             button.BackColor = Color.Green;
-                             buffer.Add(button);
-                             if (buffer.Count == 2)
-                             {
-                                 pairs.Add(Tuple.Create(buffer[0].Name, buffer[1].Name));
-                             }
-                             else if (buffer.Count == 3)
-                             {
-                                 buffer[0].Checked = false;
-                                 pairs.Add(Tuple.Create(buffer[0].Name, buffer[1].Name));
-                             }
-                         }
-                         else
-                         {
-                             if(buffer.Contains(button))
-                                buffer.Remove(button);
-                             button.BackColor = Color.Red;
-                         }
-                     };
-                    index++;
-                }
+                textBox.Text = "Неверный ввод!";
+                return;
             }
+
+            int num1;
+            int num2;
+            if(!int.TryParse(s[0], out num1) || !int.TryParse(s[1], out num2))
+            {
+                textBox.Text = "Неверный ввод!";
+                return;
+            }
+
+            pairs.Add(Tuple.Create(num1, num2));
+            textBox.Text = "Успешно!";
         }
+
 
         public Form1()
         {
             InitializeComponent();
-            ClientSize = new Size(500, 700);
-            CreateGraph();
+            DoubleBuffered = true;
+            ClientSize = new Size(1000, 700);
 
-            foreach(var butt in buttons)
+            var textBox = new TextBox()
             {
-                Controls.Add(butt);
-            }
+                MinimumSize = new Size(200, 30),
+                Left = 50,
+                Top = 50,
+                Text = "Введите пару узлов через пробел"
 
-            //var timer = new Timer();
-            //timer.Interval = 15;//1000/600; 
-            //timer.Tick += (sender, args) =>
-            //{
-            //    Invalidate();
-            //};
-            //timer.Start();
+            };
+            textBox.Click += (s, a) => textBox.Text = "";
+
+            var addPairButton = new Button()
+            { 
+                Text = "Добавить пару",
+                Left = textBox.Right + 20,
+                Top = textBox.Top,
+                Size = new Size(100, textBox.Height)
+            };
+            addPairButton.Click += (semd, args) => AddPair(textBox);
+
+            var clearButton = new Button()
+            {
+                Text = "Очистить",
+                Left = textBox.Right + 20,
+                Top = addPairButton.Bottom,
+                Size = new Size(100, textBox.Height)
+            };
+            clearButton.Click += (s, a) => pairs.Clear();
+
+
+            Controls.Add(clearButton);
+            Controls.Add(addPairButton);
+            Controls.Add(textBox);
+            var timer = new Timer();
+            timer.Interval = 15;//1000/600; 
+            timer.Tick += (sender, args) =>
+            {
+                Invalidate();
+            };
+            timer.Start();
+
+
+
+            GraphModel = new GraphicGraphModel(new Graph());
         }
 
 

@@ -37,8 +37,27 @@ namespace GraphColoring
         {
             for(int i = 0; i < rectangles.Length; i++)
             {
-                g.FillEllipse(Brushes.Red, rectangles[i]);
+                var nodeIndex = Graph.Nodes.Where(n => n.NodeIndex == i).ToList();
+                var currentCol = nodeIndex.Count == 1 ? nodeIndex[0].NodeColor : Color.LightGray;
+                g.FillEllipse(new SolidBrush(currentCol), rectangles[i]);
                 g.DrawString($"{i}", new Font("Arial", 10), Brushes.Black, new Point(rectangles[i].X + TileSize / 2, rectangles[i].Y + TileSize / 2));
+            }
+        }
+
+        public void DrawConections(Graphics g)
+        {
+            foreach(var node in Graph.Nodes)
+            {
+                var index = node.NodeIndex;
+                foreach(var secNode in node.IncindentNodes)
+                {
+                    var secIndex = secNode.NodeIndex;
+
+                    var fpt = new Point(rectangles[index].X + TileSize/2 , rectangles[index].Y + TileSize / 2);
+                    var spt = new Point(rectangles[secIndex].X + TileSize / 2, rectangles[secIndex].Y + TileSize / 2);
+
+                    g.DrawLine(new Pen(Color.Black,2), fpt, spt);
+                }
             }
         }
     }

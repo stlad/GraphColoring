@@ -30,22 +30,22 @@ namespace GraphColoring
                 allNodes[s].IncindentNodes.Add(allNodes[f]);
             }
 
-            var fin = allNodes.Where(x=> x.IncindentNodes!=null).ToList();
+            var fin = allNodes.Where(x=> x.IncindentNodes.Count!=0).ToList();
             return new Graph(fin);
         }
     }
 
     public class Node
     {
-        public List<Node> IncindentNodes { get; set; }
-        public Color NodeColor { get; set; }
-
+        public List<Node> IncindentNodes = new List<Node>();
+        public Color NodeColor = Color.DarkGray;
         public int NodeIndex { get; set; }
+
     }
 
     public class Graph
     {
-        public List<Node> Nodes { get; set; }
+        public List<Node> Nodes = new List<Node>();
         public Graph() { }
         public Graph(List<Node> list)
         {

@@ -34,6 +34,7 @@ namespace GraphColoring
             //var r1 = new Rectangle(650, 300, 40, 40);
             //g.DrawRectangle(Pens.Black, r1);
 
+            GraphModel.DrawConections(g);
             GraphModel.DrawGraph(g);
 
         }
@@ -57,6 +58,17 @@ namespace GraphColoring
                 return;
             }
 
+            if(num1 >=8 || num2 >=8 || num1<0 || num2<0)
+            {
+                textBox.Text = "Неверный ввод!";
+                return;
+            }
+
+            if(num1==num2)
+            {
+                textBox.Text = "Петли не корректны!";
+                return;
+            }
             pairs.Add(Tuple.Create(num1, num2));
             textBox.Text = "Успешно!";
         }
@@ -67,6 +79,10 @@ namespace GraphColoring
             InitializeComponent();
             DoubleBuffered = true;
             ClientSize = new Size(1000, 700);
+            GraphModel = new GraphicGraphModel(new Graph());
+            this.BackColor = Color.LightGray;
+
+
 
             var textBox = new TextBox()
             {
@@ -94,9 +110,26 @@ namespace GraphColoring
                 Top = addPairButton.Bottom,
                 Size = new Size(100, textBox.Height)
             };
-            clearButton.Click += (s, a) => pairs.Clear();
+            clearButton.Click += (s, a) =>
+            {
+                pairs.Clear();
+                GraphModel = new GraphicGraphModel(new Graph());
+            };
 
+            var makeGrButton = new Button()
+            {
+                Text = "Создать граф",
+                Left = textBox.Right + 20,
+                Top = clearButton.Bottom,
+                Size = new Size(100, textBox.Height)
+            };
+            makeGrButton.Click += (s, a) =>
+             {
+                 var graph = GraphFactory.GetGraph(pairs);
+                 GraphModel = new GraphicGraphModel(graph);
+             };
 
+            Controls.Add(makeGrButton);
             Controls.Add(clearButton);
             Controls.Add(addPairButton);
             Controls.Add(textBox);
@@ -109,8 +142,6 @@ namespace GraphColoring
             timer.Start();
 
 
-
-            GraphModel = new GraphicGraphModel(new Graph());
         }
 
 

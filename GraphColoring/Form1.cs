@@ -43,7 +43,7 @@ namespace GraphColoring
         public void AddPair(TextBox textBox)
         {
             var str = textBox.Text;
-            var s = str.Split(',');
+            var s = str.Split(',','.');
             if(s.Length!=2)
             {
                 textBox.Text = "Неверный ввод!";
@@ -129,6 +129,17 @@ namespace GraphColoring
                  GraphModel = new GraphicGraphModel(graph);
              };
 
+
+            var colorGraphButton = new Button()
+            {
+                Text = "Раскрасить граф",
+                Left = textBox.Right + 20,
+                Top = makeGrButton.Bottom + 100,
+                Size = new Size(100, textBox.Height+50)
+            };
+            colorGraphButton.Click += (s, a) => GraphModel.Graph.ColorGraph();
+
+            Controls.Add(colorGraphButton);
             Controls.Add(makeGrButton);
             Controls.Add(clearButton);
             Controls.Add(addPairButton);

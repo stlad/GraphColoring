@@ -18,6 +18,7 @@ namespace GraphColoring
         public static List<Tuple<int, int>> pairs = new List<Tuple<int, int>>();
         public static GraphicGraphModel GraphModel { get; set; }
 
+        public static List<Graph> Examples = new List<Graph>();
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -144,6 +145,9 @@ namespace GraphColoring
             Controls.Add(clearButton);
             Controls.Add(addPairButton);
             Controls.Add(textBox);
+            GetGraphExamples();
+
+
             var timer = new Timer();
             timer.Interval = 15;//1000/600; 
             timer.Tick += (sender, args) =>
@@ -156,7 +160,79 @@ namespace GraphColoring
         }
 
 
+        public void MakeExamplesButton()
+        {
+            //int dx = 50;
+            for(int i = 0; i <Examples.Count;i++)
+            {
+                var g = Examples[i];
+                var butt = new Button()
+                {
+                    Text = $"Пример {i + 1}",
+                    Left = 50 + 100 * i,
+                    Top = ClientRectangle.Bottom - 100,
+                    Size = new Size(100, 30)
+                };
+                butt.Click += (s, a) => GraphModel = new GraphicGraphModel(g);
+                Controls.Add(butt);
+            }
 
+
+           
+
+
+        }
+
+        public void  GetGraphExamples()
+        {
+            var g1 = new List<Tuple<int,int>>()
+            {
+                Tuple.Create(5,4),
+                Tuple.Create(3,4),
+                Tuple.Create(5,3),
+                Tuple.Create(5,0),
+            };
+            Examples.Add(GraphFactory.GetGraph(g1));
+
+            var g2 = new List<Tuple<int, int>>()
+            {
+                Tuple.Create(0,1),
+                Tuple.Create(0,2),
+                Tuple.Create(0,3),
+                Tuple.Create(0,4),
+                Tuple.Create(0,5),
+                Tuple.Create(0,6),
+                Tuple.Create(0,7),
+            };
+            Examples.Add(GraphFactory.GetGraph(g2));
+
+
+
+            var g3 = new List<Tuple<int, int>>();
+            for(int i = 0; i < 8;i++)
+            {
+                for(int j = 0; j < 8;j++)
+                {
+                    if (i == j) continue;
+                    g3.Add(Tuple.Create(i, j));
+                }
+            }
+            Examples.Add(GraphFactory.GetGraph(g3));
+
+            var g4 = new List<Tuple<int, int>>()
+            {
+                Tuple.Create(1, 6),
+                Tuple.Create(4, 6),
+                Tuple.Create(1, 4),
+                Tuple.Create(2, 6),
+                Tuple.Create(3, 6),
+                Tuple.Create(2, 3),
+            };
+            Examples.Add(GraphFactory.GetGraph(g4));
+
+
+            MakeExamplesButton();
+        }
 
     }
 }

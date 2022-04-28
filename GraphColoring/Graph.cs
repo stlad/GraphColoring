@@ -45,6 +45,17 @@ namespace GraphColoring
 
     public class Graph
     {
+        public static Dictionary<int, Color> ColorDict = new Dictionary<int, Color>()
+        {
+            [0] = Color.Red,
+            [1] = Color.Green,
+            [2] = Color.Blue,
+            [3] = Color.Magenta,
+            [4] = Color.Yellow,
+            [5] = Color.Orange,
+            [6] = Color.Pink,
+            [7] = Color.Purple,
+        };
         public List<Node> Nodes = new List<Node>();
         public Graph() { }
         public Graph(List<Node> list)
@@ -52,5 +63,20 @@ namespace GraphColoring
             Nodes = list;
         }
 
+
+        public void ColorGraph()
+        {
+            foreach (var v in Nodes)
+            {
+                foreach(var color in ColorDict.Keys)
+                {
+                    if(!v.IncindentNodes.Any(node=> node.NodeColor == ColorDict[color]))
+                    {
+                        v.NodeColor = ColorDict[color];
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
